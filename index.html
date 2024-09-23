@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="script.js"></script>
+  </head>
+  <body>
+    <button onclick="f()">Click me for info!</button>
+    <div>
+      <p id="hello" style="color: navy; font-weight: 300; font: size 20px"></p>
+    </div>
+    <script type="text/javascript">
+      function f() {
+        let fn = Me.firstName;
+        let ln = Me.lastName;
+        let y = Me.yearsOfStudy;
+        let g = Me.goal;
+
+        let words = `Hello! I am ${fn} ${ln}. I have been studying at SCC for ${y} years. After completing my courses I hope to ${g}. Nice to meet you!`;
+        document.getElementById("hello").innerHTML = words;
+      }
+    </script>
+  </body>
+</html>
