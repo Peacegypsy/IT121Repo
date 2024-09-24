@@ -15,8 +15,10 @@
         let y = Me.yearsOfStudy;
         let g = Me.goal;
 
-        let words = `Hello! I am ${fn} ${ln}. I have been studying at SCC for ${y} years. After completing my courses I hope to ${g}. Nice to meet you!`;
-        document.getElementById("hello").innerHTML = words;
+        const words = `Hello! I am ${fn} ${ln}. 
+        \nI have been studying at SCC for ${y} years. 
+        \nAfter completing my courses I hope to ${g} Nice to meet you!`;
+        document.getElementById("hello").innerText = words;
       }
     </script>
   </body>
