@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div class="viewBox">
+      <div id="title">
+        <h2>Pig Latin Translator</h2>
+      </div>
+      <div class="container">
+        <div>
+          <label for="phrase">Enter word or short phrase: </label>
+          <textarea
+            id="phraseInput"
+            name="phrase"
+            onkeypress="process(event, this)"
+          ></textarea>
+        </div>
+        <button id="tnslb">Translate</button>
+
+        <div>
+          <label for="plresponse">Your word/phrase in Pig Latin is: </label>
+          <textarea id="outputText" name="plresponse"></textarea>
+        </div>
+      </div>
+      <script src="pl.js"></script>
+    </div>
+  </body>
+</html>
