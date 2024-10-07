@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div class="title-container">
+      <div id="title"><h2>Student Grades</h2></div>
+    </div>
+    <div class="body-container">
+      <div>
+        <p id="sg"></p>
+        <script>
+          const students_grades = [
+            { name: "Harry", grade: 90 },
+            { name: "Hermione", grade: 100 },
+            { name: "Ron", grade: 70 },
+            { name: "Luna", grade: 80 },
+            { name: "Neville", grade: 85 },
+            { name: "Draco", grade: 60 },
+            { name: "William", grade: 55 },
+          ];
+          const sLength = students_grades.length;
+          let text = "<ul>";
+          for (let i = 0; i < sLength; i++) {
+            text +=
+              "<li>" +
+              students_grades[i].name +
+              "-" +
+              students_grades[i].grade +
+              "</li>";
+          }
+          text += "</ul>";
+          document.getElementById("sg").innerHTML = text;
+        </script>
+      </div>
+    </div>
+  </body>
+</html>
