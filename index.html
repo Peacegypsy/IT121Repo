@@ -2,18 +2,19 @@
 <html>
   <head> </head>
   <body>
-    <button onclick="f()">Click me for info!</button>
     <div>
       <p id="hello" style="color: navy; font-weight: 300; font: size 20px"></p>
     </div>
-    <script type="text/javascript" src="script.js"></script>
-    <!-- <script> 
-    document.write(words);
-    </script> -->
     <script type="text/javascript">
+      const firstName = "Christina";
+      const lastName = "Sherman";
+      const yearsOfStudy = 2;
+      let goal = "to graduate with a degree in cybersecurity.";
+      const words = `Hello! My name is ${firstName} ${lastName}.<br /> I have been studying at SCC for ${yearsOfStudy} years.<br /> After completing my courses I hope to ${goal}`;
       function f() {
         document.getElementById("hello").innerHTML = words;
       }
+      f();
     </script>
   </body>
 </html>
