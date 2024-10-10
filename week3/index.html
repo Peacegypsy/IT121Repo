@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <title>Student grades</title>
 </head>
-  <body>
+  <body style=" font-family: 'Quicksand', sans-serif; word-spacing: 5px; ">
     <div class="title-container">
       <div id="title"><h2>Student Grades</h2></div>
     </div>
     <div class="body-container">
       <div>
-        <ul id="studentList"></ul>
+        <ul id="studentList" style="list-style-type: square; " ></ul>
+        <p id="count"></p>
         <hr>
-        <p id="Low"></p>
-        <p id="High"></p>
-        <p id="Avg"></p>
+        <p id="High" style="color: green"></p>
+        <p id="Low" style="color: #bb0000"></p>
+        <p id="Avg" style="color: #3B5998;"></p>
         <script>
           const grades = "jim|25, sue|32, mary|34, ann|22, ted|28, frank|15, lisa|19, mike|30, ahn|26, vishaya|27";
           const studentsAndGrades = grades.split(",");
@@ -36,14 +37,15 @@
 
           function capName(str) {
             return b = str.charAt(0).toUpperCase() + str.slice(1);
-
           }
 
+          s_g.sort((a,b) => {return a.name.localeCompare(b.name);});
           s_g.forEach((s) => {
             const li = document.createElement("li");
-            li.textContent = (`${s.name} - ${s.grade}`);
+            li.textContent = (`${s.name} - ${parseInt(s.grade)}`);
             ul.appendChild(li);
            });
+          document.getElementById("count").textContent = `Total number of students: ${studentsAndGrades.length}`;
 
           function find_min_grade(s_g) {
             let minimum = 100;
