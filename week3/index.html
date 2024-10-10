@@ -1,35 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Student grades</title>
+</head>
   <body>
     <div class="title-container">
       <div id="title"><h2>Student Grades</h2></div>
     </div>
     <div class="body-container">
       <div>
-        <p id="sg"></p>
+        <ul id="studentList"></ul>
+        <hr>
+        <p id="Low"></p>
+        <p id="High"></p>
+        <p id="Avg"></p>
         <script>
-          const students_grades = [
-            { name: "Harry", grade: 90 },
-            { name: "Hermione", grade: 100 },
-            { name: "Ron", grade: 70 },
-            { name: "Luna", grade: 80 },
-            { name: "Neville", grade: 85 },
-            { name: "Draco", grade: 60 },
-            { name: "William", grade: 55 },
-          ];
-          const sLength = students_grades.length;
-          let text = "<ul>";
-          for (let i = 0; i < sLength; i++) {
-            text +=
-              "<li>" +
-              students_grades[i].name +
-              "-" +
-              students_grades[i].grade +
-              "</li>";
+          const grades = "jim|25, sue|32, mary|34, ann|22, ted|28, frank|15, lisa|19, mike|30, ahn|26, vishaya|27";
+          const studentsAndGrades = grades.split(",");
+          const s_g = [];
+          const ul = document.getElementById("studentList");
+
+          for (let i=0; i<studentsAndGrades.length;i++) {
+            if (typeof studentsAndGrades[i] == 'string') {
+              let parts = studentsAndGrades[i].split('|');
+              let fname = parts[0].trim();
+              const name = capName(fname);
+              const grade = parseInt(parts[1].trim());
+              s_g.push({
+                name: name,
+                grade: grade
+              });
+            }
           }
-          text += "</ul>";
-          document.getElementById("sg").innerHTML = text;
+
+          function capName(str) {
+            return b = str.charAt(0).toUpperCase() + str.slice(1);
+
+          }
+
+          s_g.forEach((s) => {
+            const li = document.createElement("li");
+            li.textContent = (`${s.name} - ${s.grade}`);
+            ul.appendChild(li);
+           });
+
+          function find_min_grade(s_g) {
+            let minimum = 100;
+            for (let i=0;i<s_g.length;i++) {
+              if (s_g[i].grade < minimum) {
+                minimum = s_g[i].grade;
+              }
+            }return minimum;
+          }
+          document.getElementById("Low").textContent = (`Lowest grade: ${find_min_grade(s_g)}`);
+
+          function find_max_grade(s_g) {
+            let max = 0;
+            for(let i=0; i<s_g.length;i++) {
+              if (s_g[i].grade > max) {
+                max = s_g[i].grade;
+              }
+            }return max;
+          }
+          document.getElementById("High").textContent = (`Highest grade: ${find_max_grade(s_g)}`);
+
+          function find_avg(s_g) {
+            let sum = 0;
+            for (let i=0;i<s_g.length;i++) {
+              sum += s_g[i].grade;
+            } return sum / s_g.length;
+          }
+
+          document.getElementById("Avg").textContent = (`Average: ${find_avg(s_g)}`);
         </script>
+        <hr />
       </div>
     </div>
   </body>
