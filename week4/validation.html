@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+</head>
+<body>
+
+<h1>Functions & validation</h1>
+
+<form id="form1" action="#" onsubmit="return validateForm(this);">
+    first name: <input type="text" name="firstname"><br>
+    last name: <input type="text" name="lastname"><br>
+    password: <input type="text" name="password"><br>
+
+    <button >Check</button>
+</form>
+
+<hr><div id="message"></div>
+
+<script>
+
+    const validateForm = (myForm) => {
+        let message = "";
+
+        function hasUpperCase(word){
+            if (word === word.toLowerCase()) {
+                message.concat("Password needs an uppercase letter!");
+                return false;
+            }else
+            {
+                return true;
+            }
+        }
+
+        function hasLowerCase(word) {
+            if (word === word.toUpperCase()){
+                message.concat("Password needs a lower case letter.");
+                return false;
+            }else
+            {
+                return true;
+            }
+        }
+
+        // add validatePassword function here
+        function validatePassword(password) {
+            if (password.length >= 8) {
+                if (hasLowerCase(password) && hasUpperCase(password)) {
+                    message.concat("Password meets requirements.");
+                    return true;
+                } else {
+                    message.concat("password fail");
+                    return false;
+                }
+            }else {
+                message = message.concat("Password is too short.");
+                return false;
+            }
+        }
+
+        function validateNames(firstname, lastname) {
+            if (typeof firstname === "string" && typeof lastname === "string"){
+                if (firstname.trim().length === 0) {
+                    message = message.concat("First name cannot be empty.");
+                    return false;
+                }
+                if (lastname.trim().length === 0) {
+                    message = message.concat("Last name cannot be empty.");
+                    return false;
+                }
+            }return true;
+        }
+
+        let firstname = myForm.firstname.value; // get text of firstname field
+        let lastname = myForm.lastname.value;
+        let password = myForm.password.value;
+        /* Form validation code goes here
+        */
+        if (validatePassword(password) && validateNames(firstname, lastname)) {
+            message = message.concat(" Successfully created!");
+        }else {
+            message = message.concat(" Please try again.");
+        }
+
+        // use this syntax to update 'message' DIV with appropriate wording
+        $("#message").html(message);
+
+
+        return false; // prevent page reload
+    }
+
+</script>
+
+</body>
+</html>
