@@ -8,15 +8,13 @@ const students_grades = [
   { name: "William", grade: 55 },
 ];
 function show_student_grade(students_grades) {
-  student_list = "";
-  for (student in students_grades) {
+  let student_list = "";
+  for(const student in students_grades){
     student_list += `${student.name} - ${student.grade}`;
-    return student_list;
-  }
+
+  }return student_list;
 }
 var gradesButton = document.getElementById("get-grades");
 gradesButton.onclick = function () {
-  s = show_student_grade(students_grades);
-  var outputText = (document.getElementById("student-name-grade").innerHTML =
-    s);
+  document.getElementById("student-name-grade").innerHTML = show_student_grade(students_grades);
 };
