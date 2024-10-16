@@ -5,7 +5,7 @@ Christina
 */
 
 function swap_phrase(phrase) {
-  if (phrase == "") {
+  if (phrase === "") {
     return "Error: please enter a word or short phrase.";
   }
   let words = phrase.split(" ");
@@ -32,11 +32,11 @@ function swap_phrase(phrase) {
     } // add word(s) to empty string
     piglatin += nw;
   }
-  return `${piglatin}`;
+  return `${piglatin.toLowerCase()}`;
 }
 var tnslb = document.getElementById("tnslb");
 tnslb.onclick = function () {
   var inputPhrase = document.getElementById("phraseInput").value;
-  var outputText = (document.getElementById("outputText").value =
-    swap_phrase(inputPhrase));
+  document.getElementById("outputText").value =
+    swap_phrase(inputPhrase);
 };
