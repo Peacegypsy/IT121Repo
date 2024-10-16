@@ -25,7 +25,7 @@ function swap_phrase(phrase) {
       notVowels.includes(words[i].charAt(0)) &&
       notVowels.includes(words[i].charAt(1))
     ) {
-      nw = words[i].substring(1) + words[i].charAt(0) + "ay ";
+      nw = words[i].substring(2) + words[i].substring(0,2) + "ay ";
     } else {
       // If word starts with one consonant
       nw = words[i].substring(1) + words[i].charAt(0) + "ay ";
