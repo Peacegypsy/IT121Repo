@@ -1,0 +1,134 @@
+<!DOCTYPE>
+<html lang="en/us">
+<head>
+<meta charset="UTF-8">
+    <title>Robo draw cards</title>
+    <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous">
+
+    </script>
+</head>
+<body>
+    <h1>Robo Dealer</h1>
+
+    <button onclick="dealHand();">Deal Hand</button>
+
+    <hr><div id="card_hand">
+        <ul id="cardList">
+        </ul>
+    </div>
+    <hr><div id="deck">
+    </div>
+
+    <script>
+        /* define Card object and deck of cards here */
+        suits = ["Hearts", "Spades", "Clubs", "Diamonds"];
+        values = ["Ace", "2","3","4","5","6","7","8","9", "10", "Jack", "Queen", "King"];
+        function create_deck() {
+            let deck = [];
+            for (let suit of suits) {
+                for (let value of values) {
+                    const card = {Value: value, Suit: suit};
+                    deck.push(card);
+                }
+            }return deck;
+        }
+
+        function shuffle_deck(deck) {
+            for(let i=0;i<deck.length;i++) {
+                let a = Math.floor((Math.random() * deck.length));
+                let b = Math.floor((Math.random() * deck.length));
+                let temp = deck[a];
+                deck[a] = deck[b];
+                deck[b] = temp;
+            }
+        }
+        function render_deck(deck) {
+            document.getElementById("deck").innerHTML ="";
+            for (let i=0; i<deck.length;i++) {
+                let card = document.createElement("div");
+                let cardValue = document.createElement("div");
+                let cardSuit = document.createElement("div");
+                card.className = "card";
+                cardValue.className = "value";
+                cardSuit.className = "suit" + deck[i].Suit;
+
+                cardValue.innerHTML = (deck[i].Value + " of " + deck[i].Suit);
+                card.appendChild(cardValue);
+                card.appendChild(cardSuit);
+
+                document.getElementById("deck").appendChild(card);
+            }
+            return false;
+        }
+
+
+        function render_hand(hand) {
+            const ul = document.getElementById("cardList");
+            for (let i=0; i<hand.length;i++) {
+                let card = document.createElement("li");
+                card.className = "card";
+
+                let icon;
+                if (hand[i].Suit === 'Hearts') {icon = '&hearts;' }
+                else if (hand[i].Suit === 'Diamonds') {icon = "&diams;"}
+                else if (hand[i].Suit === 'Spades') {icon = "&spades;"}
+                else icon = "&clubs;";
+
+                card.textContent = (`${hand[i].Value} of ${icon} ,`);
+                ul.appendChild(card);
+
+            }
+            return ul;
+        }
+
+        let hand = [];
+
+        function get_five_cards(deck) {
+            let i = 0;
+            while (i < 5) {
+                let card = deck[Math.floor(Math.random() * 52)];
+                let index = deck.indexOf(card);
+                hand.push(card);
+                deck.splice(index, 1);
+                i++
+            }return hand;
+        }
+
+
+        let deck = create_deck();
+        shuffle_deck(deck);
+
+        const dealHand = () => {
+
+            /* code to deal a card hand goes here */
+            let hand = get_five_cards(deck);
+            const ul = document.getElementById("cardList");
+
+            for (let i=0; i<hand.length;i++) {
+                let card = document.createElement("li");
+                card.className = "card";
+
+                let icon;
+                if (hand[i].suit === 'Hearts') {icon = '&hearts;' }
+                else if (hand[i].suit === 'Diamonds') {icon = "&diams;"}
+                else if (hand[i].suit === 'Spades') {icon = "&spades;"}
+                else icon = "&clubs;";
+
+                card.innerHTML = (`${hand[i].Value} of ${icon}`);
+                ul.appendChild(card);
+            }
+            //const innerList = render_hand(hand);
+            document.getElementById("card_hand > ul").appendChild(render_hand(hand));
+
+            // update 'card_hand' DIV with appropriate information
+            $("#card_hand").html("Button clicked");
+
+            return false; // prevent page reload
+        }
+
+    </script>
+</body>
+</html>
