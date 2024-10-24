@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RoboDeal</title>
+    <link rel="stylesheet" href="style.css">
+    <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous">
+
+    </script>
+</head>
+<body>
+<button onclick="dealHand();">Deal Hand</button>
+<hr>
+<div id="card_hand">
+    <ul id="card_list"></ul>
+</div>
+<hr>
+<div id="deck">
+</div>
+<script type="text/javascript">
+
+    suits = ["Hearts", "Spades", "Clubs", "Diamonds"];
+    values = ["Ace", "2","3","4","5","6","7","8","9", "10", "Jack", "Queen", "King"];
+
+    function create_deck() {
+        const deck = [];
+        for (let suit of suits) {
+            for (let value of values) {
+                const card = { value, suit};
+                deck.push(card);
+            }
+        }return deck;
+    }
+
+    function render_cards(cards) {
+        let parent = document.getElementById("card_list");
+        while(parent.firstChild){parent.removeChild(parent.firstChild);}
+
+        for(let i=0;i<cards.length;i++) {
+            let c = document.createElement("li");
+            let cv = document.createElement("div");
+            let cs = document.createElement("div");
+            c.className = "c";
+            c.id = "li";
+            cv.className = "cv";
+            cs.className = cards[i].suit;
+
+            let icon;
+            if (cards[i].suit === 'Hearts') {icon = '&hearts;'}
+            else if (cards[i].suit === 'Diamonds') {icon = '&diams;'}
+            else if (cards[i].suit === 'Spades') {icon = '&spades;'}
+            else icon = '&clubs;'
+
+            cs.innerHTML = icon;
+
+            cv.innerHTML = cards[i].value + " of ";
+            c.appendChild(cv);
+            c.appendChild(cs);
+            document.getElementById("card_list").appendChild(c);
+
+        }return false;
+    }
+
+    const deck = create_deck();
+
+    let hand = [];
+    const dealHand = () => {
+        if (hand.length > 1) {hand = [];}
+        if (deck.length > 5) {
+            let i = 0;
+            while (i <5) {
+                let card = deck[Math.floor(Math.random() * deck.length)];
+                let index = deck.indexOf(card);
+                hand.push(card);
+                deck.splice(index, 1);
+                i++;
+            }
+            render_cards(hand);
+            return false;
+        }
+        return false;
+    }
+</script>
+
+</body>
+</html>
