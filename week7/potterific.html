@@ -6,22 +6,13 @@
             crossorigin="anonymous"></script>
 </head>
 <style>
-    table {
-        border: 3px;
-        color: #000;
-        padding: 3px;
+    table, tr, td{
+        border-spacing: 5px;
+        padding: 5px;
+        border: 1px solid white;
     }
-    .over {
-        background-color: orange;
-    }
-    .selected {
-        background-color: green;
-    }
-    table tr.odd {
-        background-color: Turquoise;
-    }
-    table tr.even {
-        background-color: aliceblue;
+    .odd {
+        background-color: #96D4D4;
     }
 </style>
 
@@ -29,8 +20,8 @@
 <div id="buttons">
     <button onclick="showHouse(this.value)" value="Gryffindor">Gryffindor</button>
     <button onclick="showHouse(this.value)" value="Hufflepuff">Hufflepuff</button>
-    <button onclick="getHouse(this.value)" value="Slytherin">Slytherin</button>
-    <button onclick="getHouse(this.value)" value="Ravenclaw">Ravenclaw</button>
+    <button onclick="showHouse(this.value)" value="Slytherin">Slytherin</button>
+    <button onclick="showHouse(this.value)" value="Ravenclaw">Ravenclaw</button>
 </div>
 
 <table id="table">
@@ -69,62 +60,39 @@
 
     let table = document.getElementById("tableBody");
 
-    function getHouse(house) {
-        table.replaceChildren("");
-        characters.forEach(item => {
-            const row = table.insertRow();
-            console.log(row.className.toString())
-            Object.values(item).forEach(value => {
-                if (item.house === house) {
-                    row.className = house;
-                    const cell = row.insertCell();
-                    cell.textContent = value;
-                }
-            })
-        })
-    }updateRows();
-
     function showHouse(house) {
-        reset();
-        //$("tr:contains(house)").show();
-        $("table").filter("tr:contains(house)");
+        var rows = $('tr');
+        let houseName = house.toString();
+        var gryff = rows.filter(`.${houseName}`).show();
+        rows.not(gryff).hide();
+        $("tr#tableHeader").show();
         updateRows();
-
     }
 
     function updateRows() {
-        $("table tr:visible:odd").addClass("odd");
-        $("table tr:visible:even").addClass("even");
+        $("tr").removeClass("odd");
+        $("tr:visible:odd").addClass("odd");
     }
 
     function reset() {
         table.replaceChildren("");
         characters.forEach(item => {
             const row = table.insertRow();
+            row.className = item.house;
+            updateRows();
             Object.values(item).forEach(value => {
                 const cell = row.insertCell();
                 cell.textContent = value;
             }
         )}
-    )}
+    )
+    updateRows();
+    }
 
     $(document).ready(function(){
-        console.log("Ready to go!");
-
-
-
-        /*
-        - add a button for each 'house' value
-        - add table row for each character
-        - set visible rows to alternating background color
-
-        - add click handler to show only rows matching selected 'house'. Enable buttons to call this handler.
-
-        - add click handler to reset table
-        */
-
+        reset();
+        console.log("Let's get sorting!");
     });
-
 
 </script>
 </html>
