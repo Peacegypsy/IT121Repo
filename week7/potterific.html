@@ -1,0 +1,130 @@
+<html>
+<head>
+    <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+</head>
+<style>
+    table {
+        border: 3px;
+        color: #000;
+        padding: 3px;
+    }
+    .over {
+        background-color: orange;
+    }
+    .selected {
+        background-color: green;
+    }
+    table tr.odd {
+        background-color: Turquoise;
+    }
+    table tr.even {
+        background-color: aliceblue;
+    }
+</style>
+
+<body>
+<div id="buttons">
+    <button onclick="showHouse(this.value)" value="Gryffindor">Gryffindor</button>
+    <button onclick="showHouse(this.value)" value="Hufflepuff">Hufflepuff</button>
+    <button onclick="getHouse(this.value)" value="Slytherin">Slytherin</button>
+    <button onclick="getHouse(this.value)" value="Ravenclaw">Ravenclaw</button>
+</div>
+
+<table id="table">
+    <tr id="tableHeader">
+        <th scope="col">name</th>
+        <th scope="col">role</th>
+        <th scope="col">house</th>
+        <th scope="col">gender</th>
+        <th scope="col">alignment</th>
+    </tr>
+    <tbody id="tableBody">
+
+    </tbody>
+</table>
+<button onclick="reset()">reset</button>
+</body>
+
+<script>
+    // list of characters
+    let characters = [
+        {name:"Albus Dumbledore", role:"staff", house:"Gryffindor",gender:"m",alignment:"good"},
+        {name:"Nymphadora Tonks", role:"", house:"Hufflepuff",gender:"f",alignment:"good"},
+        {name:"Ron Weasley", role:"student", house:"Gryffindor",gender:"m",alignment:"good"},
+        {name:"Ginny Weasley", role:"student", house:"Gryffindor",gender:"f",alignment:"good"},
+        {name:"Hermione Granger", role:"student", house:"Gryffindor",gender:"f",alignment:"good"},
+        {name:"Mad-eye Moody", role:"staff", house:"",gender:"m",alignment:"good"},
+        {name:"Prof McGonagall", role:"staff", house:"Gryffindor",gender:"f",alignment:"good"},
+        {name:"Harry Potter", role:"student", house:"Gryffindor",gender:"m",alignment:"good"},
+        {name:"Draco Malfoy", role:"student", house:"Slytherin",gender:"m",alignment:"evil"},
+        {name:"Hagrid", role:"staff", house:"Gryffindor",gender:"m",alignment:"good"},
+        {name:"Luna Lovegood", role:"student", house:"Ravenclaw",gender:"f",alignment:"good"},
+        {name:"Voldemort", role:"", house:"Slytherin",gender:"m",alignment:"evil"},
+        {name:"Bellatrix Lestrange", role:"", house:"Slytherin",gender:"f",alignment:"evil"},
+        {name:"Severus Snape", role:"staff", house:"Slytherin",gender:"m",alignment:"?"}
+    ];
+
+    let table = document.getElementById("tableBody");
+
+    function getHouse(house) {
+        table.replaceChildren("");
+        characters.forEach(item => {
+            const row = table.insertRow();
+            console.log(row.className.toString())
+            Object.values(item).forEach(value => {
+                if (item.house === house) {
+                    row.className = house;
+                    const cell = row.insertCell();
+                    cell.textContent = value;
+                }
+            })
+        })
+    }updateRows();
+
+    function showHouse(house) {
+        reset();
+        //$("tr:contains(house)").show();
+        $("table").filter("tr:contains(house)");
+        updateRows();
+
+    }
+
+    function updateRows() {
+        $("table tr:visible:odd").addClass("odd");
+        $("table tr:visible:even").addClass("even");
+    }
+
+    function reset() {
+        table.replaceChildren("");
+        characters.forEach(item => {
+            const row = table.insertRow();
+            Object.values(item).forEach(value => {
+                const cell = row.insertCell();
+                cell.textContent = value;
+            }
+        )}
+    )}
+
+    $(document).ready(function(){
+        console.log("Ready to go!");
+
+
+
+        /*
+        - add a button for each 'house' value
+        - add table row for each character
+        - set visible rows to alternating background color
+
+        - add click handler to show only rows matching selected 'house'. Enable buttons to call this handler.
+
+        - add click handler to reset table
+        */
+
+    });
+
+
+</script>
+</html>
