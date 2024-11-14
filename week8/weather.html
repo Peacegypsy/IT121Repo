@@ -1,0 +1,191 @@
+<html lang="en">
+<head>
+    <title>Weather</title>
+    <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+</head>
+<style>
+    ul {
+        display: inline-block;
+    }
+    li {
+        list-style-type: none;
+    }
+
+</style>
+<body>
+<H3>Daily Weather Forecast</h3>
+<hr>
+<form id="testform">
+    City: <input type="text" name="city" id="city">
+    State:
+    <select name="state" id="state">
+        <option value="AL">Alabama</option>
+        <option value="AK">Alaska</option>
+        <option value="AZ">Arizona</option>
+        <option value="AR">Arkansas</option>
+        <option value="CA">California</option>
+        <option value="CO">Colorado</option>
+        <option value="CT">Connecticut</option>
+        <option value="DE">Delaware</option>
+        <option value="FL">Florida</option>
+        <option value="GA">Georgia</option>
+        <option value="HI">Hawaii</option>
+        <option value="ID">Idaho</option>
+        <option value="IL">Illinois</option>
+        <option value="IN">Indiana</option>
+        <option value="IA">Iowa</option>
+        <option value="KS">Kansas</option>
+        <option value="IA">Iowa</option>
+        <option value="KY">Kentucky</option>
+        <option value="LA">Louisiana</option>
+        <option value="ME">Maine</option>
+        <option value="MD">Maryland</option>
+        <option value="ME">Maine</option>
+        <option value="MA">Massachusetts</option>
+        <option value="MI">Michigan</option>
+        <option value="MN">Minnesota</option>
+        <option value="MS">Mississippi</option>
+        <option value="MO">Missouri</option>
+        <option value="MT">Montana</option>
+        <option value="NE">Nebraska</option>
+        <option value="NV">Nevada</option>
+        <option value="NH">New Hampshire</option>
+        <option value="NJ">New Jersey</option>
+        <option value="NM">New Mexico</option>
+        <option value="NY">New York</option>
+        <option value="NC">North Carolina</option>
+        <option value="ND">North Dakota</option>
+        <option value="OH">Ohio</option>
+        <option value="OK">Oklahoma</option>
+        <option value="OR">Oregon</option>
+        <option value="PR">Puerto Rico</option>
+        <option value="PW">Palau</option>
+        <option value="PA">Pennsylvania</option>
+        <option value="RI">Rhode Island</option>
+        <option value="SC">South Carolina</option>
+        <option value="SD">South Dakota</option>
+        <option value="TN">Tennessee</option>
+        <option value="TX">Texas</option>
+        <option value="UT">Utah</option>
+        <option value="VT">Vermont</option>
+        <option value="VA">Virginia</option>
+        <option value="WA">Washington</option>
+        <option value="WV">West Virginia</option>
+        <option value="WI">Wisconsin</option>
+        <option value="WY">Wyoming</option>
+    </select>
+</form>
+<button>submit</button>
+<br>
+<div id="coords"></div>
+<div id="forecast"></div>
+<div id="five_days"></div>
+<script type="text/javascript">
+
+    BASE_URL = `https://api.weatherapi.com/v1/current.json?q=auto:ip&key=3f8ef133468c40b190d12309241311`;
+    FC_URL = `https://api.weatherapi.com/v1/forecast.json?key=3f8ef133468c40b190d12309241311`;
+
+    // daily forecast API - https://openweathermap.org/forecast16
+    // geocoding API - https://openweathermap.org/api/geocoding-api
+
+    $('button').on('click', async (e) => {
+        e.preventDefault();
+        const fcd_box = document.getElementById("five_days");
+        const city = document.getElementById("city").value;
+        const state = document.getElementById("state").value.slice(0, 2);
+
+        if (city === "" && !isNaN(city)) {
+            let em = document.getElementById("em");
+            em.textContent = "City field cannot be blank or a numeric value.";
+            return;
+        }
+
+        var obj;
+        var lat_lon;
+
+        function get_forecast() {
+            fetch(BASE_URL)
+                .then(response => response.text())
+                .then(text => {
+                    obj = text;
+                })
+                .then(() => {
+                    const lat = (JSON.parse(obj).location.lat.toString());
+                    const lon = (JSON.parse(obj).location.lon.toString());
+                    lat_lon = (lat + "," + lon);
+                })
+                .then(weather => second_call(weather));
+        }
+
+
+        function second_call() {
+            fetch(FC_URL + "&q=" + lat_lon + "&days=5&aqi=no&alerts=no")
+                .then(response => response.text())
+                .then(text => {
+                    obj = text;
+                    const fc_days = JSON.parse(text).forecast.forecastday;
+                    parse_days(fc_days);
+
+                })
+        }
+
+
+        function parse_days(fc_days) {
+            function fetch_icon_image(img_str, day) {
+                fetch(img_str)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const img = document.createElement("img");
+                        img.src = URL.createObjectURL(blob);
+                        day.appendChild(img);
+                    })
+                    .catch(error => console.error('Error: ', error));
+            }
+            for(let i=0;i<fc_days.length;i++) {
+                const day = document.createElement("ul");
+                day.className = "day";
+                const day_header = document.createElement("h3");
+                const f_date = new Date(fc_days[i].date_epoch * 1000);
+                day_header.textContent = `Forecast for ${f_date.toDateString()}`;
+                day.appendChild(day_header);
+                const humidity = document.createElement("li");
+                humidity.className = "humidity";
+                humidity.textContent = `Humidity: ${fc_days[i].day.avghumidity}`;
+                day.appendChild(humidity);
+                const min_temp = document.createElement("li");
+                min_temp.className = "min_temp";
+                min_temp.textContent = `Low temp: ${fc_days[i].day.mintemp_f}`;
+                day.append(min_temp);
+                const max_temp = document.createElement("li");
+                max_temp.className = "max_temp";
+                max_temp.textContent = `High temp: ${fc_days[i].day.maxtemp_f}`;
+                day.append(max_temp);
+                const condition = document.createElement("li");
+                condition.className = "condition";
+                condition.textContent = fc_days[i].day.condition.text;
+                day.append(condition);
+                const icon = document.createElement("img");
+                icon.className = "icon";
+                icon.src = `https://${fc_days[i].day.condition.icon.slice(2)}`;
+                day.appendChild(icon);
+                fcd_box.appendChild(day);
+               //document.getElementById("forecast").textContent = `Date: ${time}, Humidity: ${humidity} \nLow temp: ${min_temp}, High temp: ${max_temp}, Weather: ${condition} `;
+            }// return fc_days;
+
+        }
+
+
+        get_forecast();
+        // your code here
+
+        // disable button to prevent double-submit
+        $("button").disabled = true;
+
+    });
+
+</script>
+</body>
+</html>
