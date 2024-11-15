@@ -13,12 +13,24 @@
     li {
         list-style-type: none;
     }
+    #forecast {
+        font-size: 1.5rem;
+        color: cadetblue;
+    }
+    #em {
+        color: red;
+        font-size: 1.5rem;
+    }
 
 </style>
 <body>
 <H3>Daily Weather Forecast</h3>
 <hr>
+<h4>Auto-search forecast</h4>
+<button onclick="auto_search()">submit</button>
+<hr>
 <form id="testform">
+    Search by City & State: <br>
     City: <input type="text" name="city" id="city">
     State:
     <select name="state" id="state">
@@ -78,113 +90,150 @@
         <option value="WY">Wyoming</option>
     </select>
 </form>
-<button>submit</button>
+<button onclick="c_s_search()">submit</button>
+<hr>
+<div id="em"></div>
+Search by ZIP Code:
+<label for="zip"></label><input type="text" id="zip" required>
+<button onclick="zip_search()">Submit</button>
+<hr>
 <br>
-<div id="coords"></div>
 <div id="forecast"></div>
 <div id="five_days"></div>
 <script type="text/javascript">
 
+    // https://www.weatherapi.com/
     BASE_URL = `https://api.weatherapi.com/v1/current.json?q=auto:ip&key=3f8ef133468c40b190d12309241311`;
     FC_URL = `https://api.weatherapi.com/v1/forecast.json?key=3f8ef133468c40b190d12309241311`;
 
-    // daily forecast API - https://openweathermap.org/forecast16
-    // geocoding API - https://openweathermap.org/api/geocoding-api
+    const buttons = document.querySelectorAll("button");
+    const forecast = document.getElementById("forecast");
+    const em = document.getElementById("em");
 
-    $('button').on('click', async (e) => {
-        e.preventDefault();
-        const fcd_box = document.getElementById("five_days");
+// weatherapi can get lat/lon from ip address so I added a button for auto-checking
+    async function auto_search() {
+        await get_forecast();
+    }
+
+// city,state search
+    async function c_s_search() {
         const city = document.getElementById("city").value;
-        const state = document.getElementById("state").value.slice(0, 2);
-
+        const state = document.getElementById("state").value;
         if (city === "" && !isNaN(city)) {
-            let em = document.getElementById("em");
             em.textContent = "City field cannot be blank or a numeric value.";
+            setTimeout(hideMessage, 3000);
             return;
         }
+        const c_s = city + "," + state;
+        fetch(FC_URL + "&q=" + c_s + "&days=5&aqi=no&alerts=no")
+            .then(response => response.text())
+            .then(text => {
+                obj = text;
+                const f_city = JSON.parse(text).location.name;
+                const f_region = JSON.parse(text).location.region;
+                forecast.textContent = f_city + ", " + f_region;
+                const fc_days = JSON.parse(text).forecast.forecastday;
+                parse_days(fc_days);
+            })
+    }
 
-        var obj;
-        var lat_lon;
+// zip code search gets forecast for US zip code
+    async function zip_search() {
+        const zip = document.getElementById("zip").value;
+        zip.trim();
+        if (zip === "" || isNaN(zip)) {
+            em.textContent = "Zip code must not be blank or contain letters.";
+            setTimeout(hideMessage, 3000);
+            return;
+        }
+        fetch(FC_URL +"&q="+ zip +"&days=5&aqi=no&alerts=no")
+            .then(response => response.text())
+            .then(text => {
+                obj = text;
+                const f_city = JSON.parse(text).location.name;
+                const f_region = JSON.parse(text).location.region;
+                forecast.textContent = f_city + ", " + f_region;
+                const fc_days = JSON.parse(text).forecast.forecastday;
+                parse_days(fc_days);
+            })
+    }
 
-        function get_forecast() {
-            fetch(BASE_URL)
-                .then(response => response.text())
-                .then(text => {
-                    obj = text;
-                })
-                .then(() => {
-                    const lat = (JSON.parse(obj).location.lat.toString());
-                    const lon = (JSON.parse(obj).location.lon.toString());
-                    lat_lon = (lat + "," + lon);
-                })
-                .then(weather => second_call(weather));
+// variables for parsing json and holding data
+    var obj;
+    var lat_lon;
+
+// gets lat & lon info for the city/state
+    function get_forecast() {
+        fetch(BASE_URL)
+            .then(response => response.text())
+            .then(text => {
+                obj = text;
+                const f_city = JSON.parse(text).location.name;
+                const f_region = JSON.parse(text).location.region;
+                forecast.textContent = f_city + ", " + f_region;
+            })
+            .then(() => {
+                const lat = (JSON.parse(obj).location.lat.toString());
+                const lon = (JSON.parse(obj).location.lon.toString());
+                lat_lon = (lat + "," + lon);
+            })
+            .then(weather => second_call(weather));
+    }
+
+// fetches the forecast for the lat & lon location
+    function second_call() {
+        buttons.forEach((button) => button.disabled = true);
+        fetch(FC_URL + "&q=" + lat_lon + "&days=5&aqi=no&alerts=no")
+            .then(response => response.text())
+            .then(text => {
+                obj = text;
+                const fc_days = JSON.parse(text).forecast.forecastday;
+                parse_days(fc_days);
+            })
+    }
+
+// parses returned obj from api call, creates html elements and appends to parent element
+    function parse_days(fc_days) {
+        const fcd_box = document.getElementById("five_days");
+        buttons.forEach((button) => button.disabled = true);
+        for(let i=0;i<fc_days.length;i++) {
+            const day = document.createElement("ul");
+            day.className = "day";
+            const day_header = document.createElement("h3");
+            const f_date = new Date(fc_days[i].date_epoch * 1000);
+            day_header.textContent = `Forecast for ${f_date.toDateString()}`;
+            day.appendChild(day_header);
+            const humidity = document.createElement("li");
+            humidity.className = "humidity";
+            humidity.textContent = `Humidity: ${fc_days[i].day.avghumidity}`;
+            day.appendChild(humidity);
+            const min_temp = document.createElement("li");
+            min_temp.className = "min_temp";
+            min_temp.textContent = `Low temp: ${fc_days[i].day.mintemp_f}`;
+            day.append(min_temp);
+            const max_temp = document.createElement("li");
+            max_temp.className = "max_temp";
+            max_temp.textContent = `High temp: ${fc_days[i].day.maxtemp_f}`;
+            day.append(max_temp);
+            const condition = document.createElement("li");
+            condition.className = "condition";
+            condition.textContent = fc_days[i].day.condition.text;
+            day.append(condition);
+            const icon = document.createElement("img");
+            icon.className = "icon";
+            icon.src = `https://${fc_days[i].day.condition.icon.slice(2)}`;
+            day.appendChild(icon);
+            fcd_box.appendChild(day);
+        }
+    }
+
+    // clears message
+    function hideMessage() {
+        if (document.getElementById("em").textContent !== "") {
+            document.getElementById("em").textContent = "";
         }
 
-
-        function second_call() {
-            fetch(FC_URL + "&q=" + lat_lon + "&days=5&aqi=no&alerts=no")
-                .then(response => response.text())
-                .then(text => {
-                    obj = text;
-                    const fc_days = JSON.parse(text).forecast.forecastday;
-                    parse_days(fc_days);
-
-                })
-        }
-
-
-        function parse_days(fc_days) {
-            function fetch_icon_image(img_str, day) {
-                fetch(img_str)
-                    .then(response => response.blob())
-                    .then(blob => {
-                        const img = document.createElement("img");
-                        img.src = URL.createObjectURL(blob);
-                        day.appendChild(img);
-                    })
-                    .catch(error => console.error('Error: ', error));
-            }
-            for(let i=0;i<fc_days.length;i++) {
-                const day = document.createElement("ul");
-                day.className = "day";
-                const day_header = document.createElement("h3");
-                const f_date = new Date(fc_days[i].date_epoch * 1000);
-                day_header.textContent = `Forecast for ${f_date.toDateString()}`;
-                day.appendChild(day_header);
-                const humidity = document.createElement("li");
-                humidity.className = "humidity";
-                humidity.textContent = `Humidity: ${fc_days[i].day.avghumidity}`;
-                day.appendChild(humidity);
-                const min_temp = document.createElement("li");
-                min_temp.className = "min_temp";
-                min_temp.textContent = `Low temp: ${fc_days[i].day.mintemp_f}`;
-                day.append(min_temp);
-                const max_temp = document.createElement("li");
-                max_temp.className = "max_temp";
-                max_temp.textContent = `High temp: ${fc_days[i].day.maxtemp_f}`;
-                day.append(max_temp);
-                const condition = document.createElement("li");
-                condition.className = "condition";
-                condition.textContent = fc_days[i].day.condition.text;
-                day.append(condition);
-                const icon = document.createElement("img");
-                icon.className = "icon";
-                icon.src = `https://${fc_days[i].day.condition.icon.slice(2)}`;
-                day.appendChild(icon);
-                fcd_box.appendChild(day);
-               //document.getElementById("forecast").textContent = `Date: ${time}, Humidity: ${humidity} \nLow temp: ${min_temp}, High temp: ${max_temp}, Weather: ${condition} `;
-            }// return fc_days;
-
-        }
-
-
-        get_forecast();
-        // your code here
-
-        // disable button to prevent double-submit
-        $("button").disabled = true;
-
-    });
+    }
 
 </script>
 </body>
