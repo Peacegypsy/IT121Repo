@@ -1,0 +1,25 @@
+{
+  "name": "week10",
+  "version": "1.0.0",
+  "description": "homework for week 10 in IT122 Javascript",
+  "main": "basics.js",
+  "type": "module",
+  "scripts": {
+    "test": "Hello World"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Peacegypsy/IT121Repo.git#Main"
+  },
+  "keywords": [
+    "node",
+    "npm",
+    "javascript"
+  ],
+  "author": "Christina Sherman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Peacegypsy/IT121Repo/issues"
+  },
+  "homepage": "https://github.com/Peacegypsy/IT121Repo/tree/Main#readme"
+}
